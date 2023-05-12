@@ -1,4 +1,4 @@
-```
+
 # This is a demo task done for the position of full stack laravel developer.
 
 This repository contains an example implementation of a this task that utilizes the repository pattern and scope filters to retrieve and filter products.
