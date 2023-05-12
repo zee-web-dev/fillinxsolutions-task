@@ -23,6 +23,7 @@ git clone https://github.com/zee-web-dev/fillinxsolutions-task.git
 
 ```bash
 cd fillinxsolutions-task
+git checkout task
 ```
 
 3. Install the dependencies using Composer:
