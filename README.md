@@ -97,5 +97,10 @@ Retrieve products with a price less than or equal to 80000:
 GET /api/products?price=80000
 ```
 
+Testing
 ```
-Feel free to modify the `README.md` file to match your specific project structure, naming conventions, and additional instructions if needed.
+The project includes tests to ensure the correctness of the API endpoints. To run the tests, execute the following command:
+```
+```bash
+php artisan test
+```
