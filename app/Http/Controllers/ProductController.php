@@ -15,37 +15,45 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $category = $request->query('category');
-        $priceLessThan = $request->query('price');
+        try {
+            $category = $request->query('category');
+            $priceLessThan = $request->query('price');
 
-        $products = $this->productRepository->getAll($category, $priceLessThan);
+            $products = $this->productRepository->getAll($category, $priceLessThan);
 
-        $discountedProducts = $products->map(function ($product) {
-            $discountedPrice = $product->price;
+            $discountedProducts = $products->map(function ($product) {
+                $discountedPrice = $product->price;
 
-            if ($product->category === 'boots') {
-                $discountedPrice = $product->price * 0.7;
-            }
+                if ($product->sku === '000003') {
+                    $discountedPrice = $product->category === 'boots' ? $product->price * 0.7 : $product->price * 0.85;
+                } else {
+                    $discountedPrice = $product->price * 0.7;
+                }
 
-            if ($product->sku === '000003') {
-                $discountedPrice = $product->price * 0.85;
-            }
+                $discountPercentage = ($product->price - $discountedPrice) / $product->price * 100;
 
-            $discountPercentage = ($product->price - $discountedPrice) / $product->price * 100;
+                return [
+                    'sku' => $product->sku,
+                    'name' => $product->name,
+                    'category' => $product->category,
+                    'price' => [
+                        'original' => $product->price,
+                        'final' => $discountedPrice,
+                        'discount_percentage' => $discountPercentage . '%',
+                        'currency' => 'PKR'
+                    ]
+                ];
+            });
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], $th->getCode());
+        }
 
-            return [
-                'sku' => $product->sku,
-                'name' => $product->name,
-                'category' => $product->category,
-                'price' => [
-                    'original' => $product->price,
-                    'final' => $discountedPrice,
-                    'discount_percentage' => $discountPercentage . '%',
-                    'currency' => 'PKR'
-                ]
-            ];
-        })->take(5);
-
-        return response()->json($discountedProducts);
+        return response()->json([
+            'success' => true,
+            'data' => $discountedProducts
+        ]);
     }
 }
